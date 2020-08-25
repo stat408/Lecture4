@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <title>Week 4: Simulation, Loops, and if/else Statements</title>
+  <title>R Style, Programming, and Debugging</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -1083,9 +1083,9 @@ visibility: hidden; }
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -1095,14 +1095,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -1111,9 +1113,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -1830,360 +1832,242 @@ document.getElementsByTagName('head')[0].appendChild(style);
     <div class="slides">
 
 <section>
-    <h1 class="title">Week 4: Simulation, Loops, and if/else Statements</h1>
+    <h1 class="title">R Style, Programming, and Debugging</h1>
 </section>
 
-<section><section id="simulation-in-r" class="title-slide slide level1"><h1>Simulation in R</h1></section><section id="what-is-simulation" class="slide level2">
-<h2>What is Simulation</h2>
-<p>A few questions about simulation:</p>
+<section><section id="r-programming-style" class="title-slide slide level1"><h1>R Programming Style</h1></section><section id="r-style-guide" class="slide level2">
+<h2>R Style Guide</h2>
+<p>While there is not universal agreement on programming style, there are two good examples:</p>
 <ol type="1">
-<li class="fragment"><p>What does statistical simulation mean to you?</p></li>
-<li class="fragment"><p>Describe a setting where simulation can be used.</p></li>
+<li class="fragment"><p>Hadley Wickham’s Style Guide: <a href="http://adv-r.had.co.nz/Style.html">http://adv-r.had.co.nz/Style.html</a></p></li>
+<li class="fragment"><p>Google R Style Guide: <a href="https://google.github.io/styleguide/Rguide.xml">https://google.github.io/styleguide/Rguide.xml</a>, which presents different options from Wickham’s guide.</p></li>
 </ol>
-</section><section id="simulation-of-roulette" class="slide level2">
-<h2>Simulation of Roulette</h2>
-<p>Consider the casino game Roulette.</p>
-<p><img data-src="data:image/jpeg;base64,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" alt="Roulette Wheel" /></p>
-<p>We can use simulation to evaluate gambling strategies.</p>
-</section><section id="roulette-simulation-in-r" class="slide level2">
-<h2>Roulette Simulation in R</h2>
-
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">RouletteSpin &lt;-<span class="st"> </span><span class="cf">function</span>(num.spins){</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">  <span class="co"># function to simulate roulette spins</span></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">  <span class="co"># ARGS: number of spins</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">  <span class="co"># RETURNS: result of each spin</span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">  outcomes &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">number =</span> <span class="kw">c</span>(<span class="st">'00'</span>,<span class="st">'0'</span>,</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">                <span class="kw">as.character</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">36</span>)),</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">                <span class="dt">color=</span><span class="kw">c</span>(<span class="st">'green'</span>,<span class="st">'green'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,</a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">                        <span class="st">'red'</span>,<span class="st">'black'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,</a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">                        <span class="st">'black'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,</a>
-<a class="sourceLine" id="cb1-10" data-line-number="10">                        <span class="st">'red'</span>,<span class="st">'black'</span>,<span class="st">'red'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,</a>
-<a class="sourceLine" id="cb1-11" data-line-number="11">                        <span class="st">'red'</span>,<span class="st">'black'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,<span class="st">'red'</span>,</a>
-<a class="sourceLine" id="cb1-12" data-line-number="12">                        <span class="st">'black'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,<span class="st">'black'</span>,<span class="st">'red'</span>,</a>
-<a class="sourceLine" id="cb1-13" data-line-number="13">                        <span class="st">'black'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,<span class="st">'red'</span>,<span class="st">'black'</span>,<span class="st">'red'</span>))</a>
-<a class="sourceLine" id="cb1-14" data-line-number="14">  <span class="kw">return</span>(outcomes[<span class="kw">sample</span>(<span class="dv">38</span>,num.spins,<span class="dt">replace=</span>T),])</a>
-<a class="sourceLine" id="cb1-15" data-line-number="15">}</a>
-<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="kw">kable</span>(<span class="kw">RouletteSpin</span>(<span class="dv">2</span>), <span class="dt">row.names=</span>F)</a></code></pre></div>
+</section><section id="notation-and-naming" class="slide level2">
+<h2>Notation and Naming</h2>
+<ul>
+<li class="fragment"><strong>File Names:</strong> File names should end in .R and be meaningful.
+<ul>
+<li class="fragment">Good: predict_ad_revenue.R</li>
+<li class="fragment">Bad: foo.R</li>
+</ul></li>
+<li class="fragment"><strong>Identifiers:</strong> Don’t use underscores or hypens in identifiers.
+<ul>
+<li class="fragment">The preferred form for variable names is all lower case letters with words separated with dots (<code>variable.name</code>), but <code>VariableName</code> is also accepted.</li>
+<li class="fragment">Function names begin with capital letters and include no dots (<code>FunctionName</code>)</li>
+</ul></li>
+</ul>
+</section><section id="syntax" class="slide level2">
+<h2>Syntax</h2>
+<ul>
+<li class="fragment"><strong>Spacing:</strong>
+<ul>
+<li class="fragment">Place spaces around all operators (<code>==, +, ...</code>)</li>
+<li class="fragment">Do not place a space before a comma, but always place one after a comma.</li>
+<li class="fragment">Place a space before left parenthesis, except in a function call.</li>
+</ul></li>
+<li class="fragment"><strong>Assignment:</strong>
+<ul>
+<li class="fragment">Use <code>&lt;-</code> not <code>=</code> for assignment.</li>
+</ul></li>
+</ul>
+</section><section id="operators-in-r" class="slide level2">
+<h2>Operators in R</h2>
+<ul>
+<li class="fragment">Most mathematical operators are self explanatory, but here are a few more important operators.
+<ul>
+<li class="fragment"><code>==</code> will test for equality. For example to determine if pi equals three, this can be evaluated with <code>pi == 3</code> in R and will return FALSE. Note this operator returns a logical value.</li>
+<li class="fragment"><code>&amp;</code> is the AND operator, so <code>TRUE &amp; FALSE</code> will return FALSE.</li>
+<li class="fragment"><code>|</code> is the OR operator, so <code>TRUE | FALSE</code> will return TRUE.</li>
+<li class="fragment"><code>!</code> is the NOT operator, so <code>! TRUE</code> will return FALSE.</li>
+<li class="fragment"><code>^</code> permits power terms, so <code>4 ^ 2</code> returns 16 and <code>4 ^ .5</code> returns 2.</li>
+</ul></li>
+</ul>
+</section><section id="exercise-order-of-operations" class="slide level2">
+<h2>Exercise: Order of operations</h2>
+<p>Note that order of operations is important in writing R code.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="dv">4</span> <span class="op">-</span><span class="st"> </span><span class="dv">2</span> <span class="op">^</span><span class="st"> </span><span class="dv">2</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>(<span class="dv">4</span> <span class="op">-</span><span class="st"> </span><span class="dv">2</span>) <span class="op">^</span><span class="st"> </span><span class="dv">2</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="dv">2</span> <span class="op">-</span><span class="st"> </span><span class="dv">3</span> <span class="op">^</span><span class="st"> </span><span class="dv">2</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>pi <span class="op">==</span><span class="st"> </span><span class="dv">3</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="op">!</span><span class="st"> </span><span class="ot">TRUE</span> <span class="op">&amp;</span><span class="st"> </span>pi <span class="op">==</span><span class="st"> </span><span class="dv">3</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="op">!</span><span class="st"> </span>(<span class="ot">TRUE</span> <span class="op">|</span><span class="st"> </span><span class="ot">FALSE</span>) </span></code></pre></div>
+<p>Evaluate all expressions. Note <code>!</code> is R’s not operator.</p>
+</section><section id="solution-order-of-operations" class="slide level2">
+<h2>Solution: Order of operations</h2>
+<p>The results of the R code are:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="dv">4</span> <span class="op">-</span><span class="st"> </span><span class="dv">2</span> <span class="op">^</span><span class="st"> </span><span class="dv">2</span></span></code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>(<span class="dv">4</span> <span class="op">-</span><span class="st"> </span><span class="dv">2</span>) <span class="op">^</span><span class="st"> </span><span class="dv">2</span></span></code></pre></div>
+<pre><code>## [1] 4</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="dv">2</span> <span class="op">-</span><span class="st"> </span><span class="dv">3</span> <span class="op">^</span><span class="st"> </span><span class="dv">2</span></span></code></pre></div>
+<pre><code>## [1] 1</code></pre>
+</section><section id="solution-order-of-operations-1" class="slide level2">
+<h2>Solution: Order of operations</h2>
+<p>The results of the R code are:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>pi <span class="op">==</span><span class="st"> </span><span class="dv">3</span></span></code></pre></div>
+<pre><code>## [1] FALSE</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="op">!</span><span class="st"> </span><span class="ot">TRUE</span> <span class="op">&amp;</span><span class="st"> </span>pi <span class="op">==</span><span class="st"> </span><span class="dv">3</span></span></code></pre></div>
+<pre><code>## [1] FALSE</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="op">!</span><span class="st"> </span>(<span class="ot">TRUE</span> <span class="op">|</span><span class="st"> </span><span class="ot">FALSE</span>) </span></code></pre></div>
+<pre><code>## [1] FALSE</code></pre>
+</section><section id="organization-layout-of-.r" class="slide level2">
+<h2>Organization: Layout of .R</h2>
+<ul>
+<li class="fragment"><strong>General Layout:</strong> The general layout of an R script should follow as:
+<ol type="1">
+<li class="fragment">Author Comment</li>
+<li class="fragment">File description comment, including purpose of program, inputs, and outputs</li>
+<li class="fragment"><code>source()</code> and <code>library()</code> statements</li>
+<li class="fragment">Function definitions</li>
+<li class="fragment">Executed statements</li>
+</ol></li>
+</ul>
+</section><section id="organization-layout-of-.rmd" class="slide level2">
+<h2>Organization: Layout of .Rmd</h2>
+<ul>
+<li class="fragment"><p><strong>General Layout:</strong> We will generally work with R Markdown files (.Rmd) in this class.</p></li>
+<li class="fragment"><p>Code comments can be included in R chunks</p></li>
+<li class="fragment"><p>Print out all code in documents</p></li>
+<li class="fragment"><p>For reproducibility R output can be integrated into text, using “r mean(x)” (using back ticks in place of quotes). <em>DO NOT</em> hard code results in written text.</p></li>
+<li class="fragment"><p>Look at output to verify results look how you intended.</p></li>
+</ul>
+</section><section id="organization-commenting" class="slide level2">
+<h2>Organization: Commenting</h2>
+<ul>
+<li>Comment your code. Entire commented lines should begin with <code>#</code> and then one space.</li>
+<li>Short comments can be placed after code preceded by two spaces, <code>#</code> and then one space.</li>
+</ul>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># create plot of housing price by zipcode</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="kw">plot</span>(Seattle<span class="op">$</span>Price <span class="op">~</span><span class="st"> </span>Seattle<span class="op">$</span>Zip,</span>
+<span id="cb14-3"><a href="#cb14-3"></a>  <span class="kw">rgb</span>(.<span class="dv">5</span>,<span class="dv">0</span>,<span class="dv">0</span>,.<span class="dv">7</span>),  <span class="co"># set transparency for points</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a>  <span class="dt">xlab=</span><span class="st">&#39;zipode&#39;</span>)</span></code></pre></div>
+</section><section id="parting-words" class="slide level2">
+<h2>Parting Words</h2>
+<ul>
+<li>Use common sense and <em>be consistent</em>.</li>
+<li>If you are editing code, take a few minutes to look at the code around you and mimic the style.</li>
+<li>Enough about writing code; the code itself is much more interesting. Have fun!</li>
+</ul>
+</section></section>
+<section><section id="course-goals" class="title-slide slide level1"><h1>Course Goals</h1><p>With this class, we cannot cover every possible situation that you will encounter. The goals are to:</p>
+<ol type="1">
+<li class="fragment">Give you a broad range of tools that can be employed to manipulate, visualize, and analyze data, and</li>
+<li class="fragment">teach you to find help when you or your code “gets stuck”.</li>
+</ol></section><section id="process-for-writing-code" class="slide level2">
+<h2>Process for writing code</h2>
+<p>When writing code (and conducting statistical analyses) an iterative approach is a good strategy.</p>
+<ol type="1">
+<li class="fragment">Test each line of code as you write it and if necessary confirm that nested functions are giving the desired results.</li>
+<li class="fragment">Start simple and then add more complexity.</li>
+</ol>
+</section><section id="debugging-overview" class="slide level2">
+<h2>Debugging Overview</h2>
+<blockquote>
+<p>Finding your bug is a process of confirming the many things that you believe are true – until you find one which is not true. - Norm Matloff</p>
+</blockquote>
+</section><section id="debugging-guide" class="slide level2">
+<h2>Debugging Guide</h2>
+<p>We will first focus on debugging when an error, or warning is tripped.</p>
+<ol type="1">
+<li class="fragment">Realize you have a bug (if error or warning, read the message)</li>
+<li class="fragment">Make it repeatable</li>
+<li class="fragment">Identify the problematic line (using print statements can be helpful)</li>
+<li class="fragment">Fix it and test it (evaluate nested functions if necessary)</li>
+</ol>
+</section><section id="warnings-vs.-errors" class="slide level2">
+<h2>Warnings vs. Errors</h2>
+<p>R will flag, print out a message, in two cases: warnings and errors.</p>
+<ul>
+<li class="fragment">What is the difference between the two?</li>
+<li class="fragment">Is the R process treated differently for errors and warnings?</li>
+</ul>
+</section><section id="warnings-vs.-errors-1" class="slide level2">
+<h2>Warnings vs. Errors</h2>
+<ul>
+<li class="fragment">Fatal errors are signaled with <code>stop()</code> and force all execution of code to stop triggering an <code>error</code>.</li>
+<li class="fragment">Warnings are generated with <code>warning()</code> and display potential problems. Warnings <strong>do not</strong> stop code from executing.</li>
+<li class="fragment">Messages can also be passed using <code>message()</code>, which pass along information.</li>
+</ul>
+</section><section id="bugs-without-warningerror" class="slide level2">
+<h2>Bugs without warning/error</h2>
+<p>In other cases, we will have bugs in our code that don’t necessarily give a warning or an error.</p>
+<ul>
+<li class="fragment">How do we identify these bugs?</li>
+<li class="fragment">How can we exit a case where:
+<ul>
+<li class="fragment">R is running and may be stuck?</li>
+<li class="fragment">the code won’t execute because of misaligned parenthesis, braces, brackets?</li>
+</ul></li>
+</ul>
+<p>Note: <code>NA</code> values often return a warning message, but not always.</p>
+</section></section>
+<section><section id="tables-for-r-markdown" class="title-slide slide level1"><h1>Tables for R Markdown</h1></section><section id="kable-function" class="slide level2">
+<h2>Kable function</h2>
+<p>Note that output from R can often be hard to read. Luckily there are several options for creating nicely formatted tables. One, which we will use, is the kable function.</p>
+</section><section id="kable-function-1" class="slide level2">
+<h2>Kable function</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">library</span>(knitr)</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="kw">kable</span>(<span class="kw">aggregate</span>(Loblolly<span class="op">$</span>height,</span>
+<span id="cb15-3"><a href="#cb15-3"></a>      <span class="dt">by=</span><span class="kw">list</span>(Loblolly<span class="op">$</span>age),mean), <span class="dt">digits=</span><span class="dv">3</span>,</span>
+<span id="cb15-4"><a href="#cb15-4"></a>      <span class="dt">caption=</span> <span class="st">&#39;Average height of loblolly pine by age&#39;</span>,</span>
+<span id="cb15-5"><a href="#cb15-5"></a>      <span class="dt">col.names =</span> <span class="kw">c</span>(<span class="st">&#39;Tree Age&#39;</span>,<span class="st">&#39;Height (ft)&#39;</span>))</span></code></pre></div>
 <table>
+<caption>Average height of loblolly pine by age</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;">number</th>
-<th style="text-align: left;">color</th>
+<th style="text-align: right;">Tree Age</th>
+<th style="text-align: right;">Height (ft)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">10</td>
-<td style="text-align: left;">black</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4.238</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">18</td>
-<td style="text-align: left;">red</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">10.205</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">27.442</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">40.544</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">51.469</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">60.289</td>
 </tr>
 </tbody>
 </table>
 </section></section>
-<section><section id="conditional-expressions-in-r" class="title-slide slide level1"><h1>Conditional Expressions in R</h1></section><section id="exercise-conditions-in-r" class="slide level2">
-<h2>Exercise: Conditions in R</h2>
-<p>We have touched on many of these before, but here are some examples of expressions (conditions) in R. Evaluate these expressions:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">pi <span class="op">&gt;</span><span class="st"> </span><span class="dv">3</span> <span class="op">&amp;</span><span class="st"> </span>pi <span class="op">&lt;</span><span class="st"> </span><span class="fl">3.5</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>) <span class="op">%in%</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">3</span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="dv">1</span><span class="op">:</span><span class="dv">3</span> <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">rand.uniform &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dt">n =</span> <span class="dv">1</span>, <span class="dt">min =</span> <span class="dv">0</span>, <span class="dt">max =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">rand.uniform <span class="op">&lt;</span><span class="st"> </span><span class="fl">.5</span></a></code></pre></div>
-</section><section id="solutions-conditions-in-r-evaluated-1" class="slide level2">
-<h2>Solutions: Conditions in R: Evaluated 1</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">pi <span class="op">&gt;</span><span class="st"> </span><span class="dv">3</span> <span class="op">&amp;</span><span class="st"> </span>pi <span class="op">&lt;</span><span class="st"> </span><span class="fl">3.5</span></a></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>) <span class="op">%in%</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">3</span></a></code></pre></div>
-<pre><code>## [1]  TRUE  TRUE FALSE FALSE</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="dv">1</span><span class="op">:</span><span class="dv">3</span> <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>)</a></code></pre></div>
-<pre><code>## [1]  TRUE FALSE  TRUE</code></pre>
-</section><section id="solutions-conditions-in-r-evaluated-2" class="slide level2">
-<h2>Solutions: Conditions in R: Evaluated 2</h2>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">01252020</span>)</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">rand.uniform &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dt">n =</span> <span class="dv">1</span>, <span class="dt">min =</span> <span class="dv">0</span>, <span class="dt">max =</span> <span class="dv">1</span>); rand.uniform</a></code></pre></div>
-<pre><code>## [1] 0.6987527</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">rand.uniform <span class="op">&lt;</span><span class="st"> </span><span class="fl">.5</span></a></code></pre></div>
-<pre><code>## [1] FALSE</code></pre>
-</section><section id="conditional-expression-if-and-else" class="slide level2">
-<h2>Conditional Expression: If and Else</h2>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">print</span>(rand.uniform)</a></code></pre></div>
-<pre><code>## [1] 0.6987527</code></pre>
-<p>Now what does this return?</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="cf">if</span> (rand.uniform <span class="op">&lt;</span><span class="st"> </span><span class="fl">.5</span>){</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2">  <span class="kw">print</span>(<span class="st">'value less than 1/2'</span>)</a>
-<a class="sourceLine" id="cb15-3" data-line-number="3">} <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb15-4" data-line-number="4">    <span class="kw">print</span>(<span class="st">'value greater than or equal to 1/2'</span>)</a>
-<a class="sourceLine" id="cb15-5" data-line-number="5">}</a></code></pre></div>
-</section><section id="conditional-expression-if-and-else-1" class="slide level2">
-<h2>Conditional Expression: If and Else</h2>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">print</span>(rand.uniform)</a></code></pre></div>
-<pre><code>## [1] 0.6987527</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="cf">if</span> (rand.uniform <span class="op">&lt;</span><span class="st"> </span><span class="fl">.5</span>){</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">  <span class="kw">print</span>(<span class="st">'value less than 1/2'</span>)</a>
-<a class="sourceLine" id="cb18-3" data-line-number="3">} <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb18-4" data-line-number="4">    <span class="kw">print</span>(<span class="st">'value greater than or equal to 1/2'</span>)</a>
-<a class="sourceLine" id="cb18-5" data-line-number="5">}</a></code></pre></div>
-<pre><code>## [1] &quot;value greater than or equal to 1/2&quot;</code></pre>
-</section><section id="conditional-expression-vectorized" class="slide level2">
-<h2>Conditional Expression: Vectorized?</h2>
-<p>Does this function accept a vector as an input?</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">rand.uniform2 &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="kw">print</span>(rand.uniform2)</a>
-<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="cf">if</span> (rand.uniform2 <span class="op">&lt;</span><span class="st"> </span><span class="fl">.5</span>){</a>
-<a class="sourceLine" id="cb20-4" data-line-number="4">  <span class="kw">print</span>(<span class="st">'value less than 1/2'</span>)</a>
-<a class="sourceLine" id="cb20-5" data-line-number="5">} <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb20-6" data-line-number="6">    <span class="kw">print</span>(<span class="st">'value greater than or equal to 1/2'</span>)</a>
-<a class="sourceLine" id="cb20-7" data-line-number="7">}</a></code></pre></div>
-</section><section id="conditional-expression-vectorized-1" class="slide level2">
-<h2>Conditional Expression: Vectorized?</h2>
-
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">rand.uniform2 &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="kw">print</span>(rand.uniform2)</a></code></pre></div>
-<pre><code>## [1] 0.2672035 0.2575682</code></pre>
-</section><section id="conditional-expression-vectorized-2" class="slide level2">
-<h2>Conditional Expression: Vectorized?</h2>
-
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="cf">if</span> (rand.uniform2 <span class="op">&lt;</span><span class="st"> </span><span class="fl">.5</span>){</a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">  <span class="st">'value less than 1/2'</span></a>
-<a class="sourceLine" id="cb23-3" data-line-number="3">} <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb23-4" data-line-number="4">    <span class="st">'value greater than 1/2'</span></a>
-<a class="sourceLine" id="cb23-5" data-line-number="5">}</a></code></pre></div>
-<pre><code>## Warning in if (rand.uniform2 &lt; 0.5) {: the condition has length &gt; 1 and only the
-## first element will be used</code></pre>
-<pre><code>## [1] &quot;value less than 1/2&quot;</code></pre>
-</section><section id="conditional-expression-ifelse" class="slide level2">
-<h2>Conditional Expression, ifelse</h2>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">print</span>(rand.uniform2)</a></code></pre></div>
-<pre><code>## [1] 0.2672035 0.2575682</code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">ifelse</span>(rand.uniform2 <span class="op">&lt;</span><span class="st"> </span><span class="fl">.5</span>,<span class="st">'less than 1/2'</span>,</a>
-<a class="sourceLine" id="cb28-2" data-line-number="2">       <span class="st">'greater than 1/2'</span>)</a></code></pre></div>
-<pre><code>## [1] &quot;less than 1/2&quot; &quot;less than 1/2&quot;</code></pre>
-<p>The <code>ifelse()</code> function is vectorized and generally preferred with a single set of if/else statements.</p>
-</section><section id="exercise-conditional-expression" class="slide level2">
-<h2>Exercise: Conditional Expression</h2>
-<p>Write a conditional statement that takes a playing card with two arguments:</p>
+<section><section id="built-in-r-functions" class="title-slide slide level1"><h1>Built in R Functions</h1></section><section id="r-functions" class="slide level2">
+<h2>R Functions</h2>
 <ul>
-<li class="fragment">(<code>card.number &lt;- '4'</code> and <code>card.suit &lt;- 'C'</code> = 4 of clubs or <code>card.number &lt;-'K'</code> and <code>card.suit &lt;- 'H'</code> = King of hearts) and</li>
-<li class="fragment">Print <code>Yes</code> if the card is a red face card and <code>No</code> otherwise.</li>
+<li>To get more details in R, type <code>?FunctionName</code>. This will open up a help window that displays essential characteristics of the function. For example, with the <code>mean</code> function the following information is shown:</li>
 </ul>
-<p>Verify this works using the following inputs:</p>
+<p><strong>Description</strong>: function for the (trimmed) arithmetic mean.</p>
+<p><strong>Usage</strong>: mean(x, trim = 0, na.rm = FALSE, …)</p>
+<p><strong>x</strong>: An R object.</p>
+<p><strong>trim:</strong> the fraction (0 to 0.5) of observations to be trimmed from each end of x before the mean is computed.</p>
+<p><strong>na.rm:</strong> a logical value indicating whether NA values should be stripped before the computation proceeds.</p>
+</section><section id="downloading-r-packages" class="slide level2">
+<h2>Downloading R Packages</h2>
 <ul>
-<li class="fragment"><code>card.number &lt;- 'J'</code> and <code>card.suit &lt;- 'D'</code></li>
-<li class="fragment"><code>card.number &lt;- 'Q'</code> and <code>card.suit &lt;- 'S'</code></li>
+<li>R has a set of built in functions, which we have used thus far.</li>
+<li>R also has a vast repository of “packages” that contain additional, specialized functions. One example is a graphics packaged called <code>ggplot2</code> which we will see later in this class.</li>
 </ul>
-</section><section id="solution-conditional-expression" class="slide level2">
-<h2>Solution: Conditional Expression</h2>
-
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">card.number &lt;-<span class="st"> 'J'</span></a>
-<a class="sourceLine" id="cb30-2" data-line-number="2">card.suit &lt;-<span class="st"> 'D'</span></a>
-<a class="sourceLine" id="cb30-3" data-line-number="3"><span class="kw">ifelse</span>(card.number <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">'J'</span>,<span class="st">'Q'</span>,<span class="st">'K'</span>) <span class="op">&amp;</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-4" data-line-number="4"><span class="st">         </span>card.suit <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">'H'</span>,<span class="st">'D'</span>),<span class="st">'Yes'</span>,<span class="st">'No'</span>)</a></code></pre></div>
-<pre><code>## [1] &quot;Yes&quot;</code></pre>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">card.number &lt;-<span class="st"> 'Q'</span></a>
-<a class="sourceLine" id="cb32-2" data-line-number="2">card.suit &lt;-<span class="st"> 'S'</span></a>
-<a class="sourceLine" id="cb32-3" data-line-number="3"><span class="kw">ifelse</span>(card.number <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">'J'</span>,<span class="st">'Q'</span>,<span class="st">'K'</span>) <span class="op">&amp;</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb32-4" data-line-number="4"><span class="st">         </span>card.suit <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">'H'</span>,<span class="st">'D'</span>),<span class="st">'Yes'</span>,<span class="st">'No'</span>)</a></code></pre></div>
-<pre><code>## [1] &quot;No&quot;</code></pre>
-</section></section>
-<section><section id="monte-carlo-procedures" class="title-slide slide level1"><h1>Monte Carlo Procedures</h1></section><section id="motivation-for-monte-carlo-procedures" class="slide level2">
-<h2>Motivation for Monte Carlo procedures</h2>
-<p>Some probabilities can easily be calculated either intuitively or using pen and paper; however, as we have seen we can also simulate procedures to get an approximate answer.</p>
-<p>Consider poker, where players are dealt a hand of five cards from a deck of 52 cards. What is the probability of being dealt a full house?</p>
-</section><section id="full-house-probability-calculation" class="slide level2">
-<h2>Full House Probability Calculation</h2>
-<p>Could we analytically compute this probability? <strong>Yes</strong> Is it an easy calculation? not necessarily. So consider a (Monte Carlo) simulation.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">DealPoker &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
-<a class="sourceLine" id="cb34-2" data-line-number="2">  <span class="co"># Function returns a hand of 5 cards</span></a>
-<a class="sourceLine" id="cb34-3" data-line-number="3">  </a>
-<a class="sourceLine" id="cb34-4" data-line-number="4">  </a>
-<a class="sourceLine" id="cb34-5" data-line-number="5">  </a>
-<a class="sourceLine" id="cb34-6" data-line-number="6">  </a>
-<a class="sourceLine" id="cb34-7" data-line-number="7">}</a></code></pre></div>
-</section><section id="full-house-probability-calculation-1" class="slide level2">
-<h2>Full House Probability Calculation</h2>
-<p>Could we analytically compute this probability? <strong>Yes</strong> Is it an easy calculation, not necessarily. So consider a (Monte Carlo) simulation. </p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">DealPoker &lt;-<span class="st"> </span><span class="cf">function</span>(){</a>
-<a class="sourceLine" id="cb35-2" data-line-number="2">  <span class="co"># Function returns a hand of 5 cards</span></a>
-<a class="sourceLine" id="cb35-3" data-line-number="3">  deck &lt;-<span class="st"> </span><span class="kw">data.frame</span>( <span class="dt">suit =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;H&quot;</span>, <span class="st">&quot;S&quot;</span>,<span class="st">&quot;C&quot;</span>,<span class="st">&quot;D&quot;</span>),<span class="dt">each=</span><span class="dv">13</span>),</a>
-<a class="sourceLine" id="cb35-4" data-line-number="4">          <span class="dt">card =</span> <span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">'A'</span>,<span class="dv">2</span><span class="op">:</span><span class="dv">10</span>,<span class="st">'J'</span>,<span class="st">&quot;Q&quot;</span>,<span class="st">'K'</span>),<span class="dv">4</span>) )  </a>
-<a class="sourceLine" id="cb35-5" data-line-number="5">  <span class="kw">return</span>(deck[<span class="kw">sample</span>(<span class="dv">52</span>,<span class="dv">5</span>),])</a>
-<a class="sourceLine" id="cb35-6" data-line-number="6">}</a></code></pre></div>
-</section><section id="full-house-probability-calculation-2" class="slide level2">
-<h2>Full House Probability Calculation</h2>
-<p>Next write another function to check if the hand is a full house. </p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">IsFullHouse &lt;-<span class="st"> </span><span class="cf">function</span>(hand){</a>
-<a class="sourceLine" id="cb36-2" data-line-number="2">  <span class="co">#determines whether a hand of 5 cards is a full house</span></a>
-<a class="sourceLine" id="cb36-3" data-line-number="3">  <span class="co">#ARGS: data frame of 5 cards</span></a>
-<a class="sourceLine" id="cb36-4" data-line-number="4">  <span class="co">#RETURNS: TRUE or FALSE</span></a>
-<a class="sourceLine" id="cb36-5" data-line-number="5">  cards &lt;-<span class="st"> </span>hand[,<span class="dv">2</span>]</a>
-<a class="sourceLine" id="cb36-6" data-line-number="6">  num.unique &lt;-<span class="st"> </span><span class="kw">length</span>(<span class="kw">unique</span>(cards))</a>
-<a class="sourceLine" id="cb36-7" data-line-number="7">  <span class="kw">ifelse</span>(num.unique <span class="op">==</span><span class="st"> </span><span class="dv">2</span>, <span class="kw">return</span>(<span class="ot">TRUE</span>),<span class="kw">return</span>(<span class="ot">FALSE</span>)) </a>
-<a class="sourceLine" id="cb36-8" data-line-number="8">}</a></code></pre></div>
-<p>Does this work? If not, what is the problem and how do we fix it?</p>
-</section><section id="full-house-probability-calculation-3" class="slide level2">
-<h2>Full House Probability Calculation</h2>
-
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">IsFullHouse &lt;-<span class="st"> </span><span class="cf">function</span>(hand){</a>
-<a class="sourceLine" id="cb37-2" data-line-number="2">  <span class="co">#determines whether a hand of 5 cards is a full house</span></a>
-<a class="sourceLine" id="cb37-3" data-line-number="3">  <span class="co">#ARGS: data frame of 5 cards</span></a>
-<a class="sourceLine" id="cb37-4" data-line-number="4">  <span class="co">#RETURNS: TRUE or FALSE</span></a>
-<a class="sourceLine" id="cb37-5" data-line-number="5">  cards &lt;-<span class="st"> </span>hand[,<span class="dv">2</span>]</a>
-<a class="sourceLine" id="cb37-6" data-line-number="6">  num.unique &lt;-<span class="st"> </span><span class="kw">length</span>(<span class="kw">unique</span>(cards))</a>
-<a class="sourceLine" id="cb37-7" data-line-number="7">  num.appearances &lt;-<span class="st"> </span><span class="kw">aggregate</span>(<span class="kw">rep</span>(<span class="dv">1</span>,<span class="dv">5</span>),</a>
-<a class="sourceLine" id="cb37-8" data-line-number="8">                               <span class="kw">list</span>(cards),sum)</a>
-<a class="sourceLine" id="cb37-9" data-line-number="9">  max.appearance &lt;-<span class="st"> </span><span class="kw">max</span>(num.appearances[,<span class="dv">2</span>])</a>
-<a class="sourceLine" id="cb37-10" data-line-number="10">  <span class="kw">ifelse</span>(num.unique <span class="op">==</span><span class="st"> </span><span class="dv">2</span> <span class="op">&amp;</span><span class="st"> </span>max.appearance <span class="op">==</span><span class="dv">3</span>,</a>
-<a class="sourceLine" id="cb37-11" data-line-number="11">         <span class="kw">return</span>(<span class="ot">TRUE</span>),<span class="kw">return</span>(<span class="ot">FALSE</span>)) </a>
-<a class="sourceLine" id="cb37-12" data-line-number="12">}</a></code></pre></div>
-</section><section id="full-house-probability-calculation-4" class="slide level2">
-<h2>Full House Probability Calculation</h2>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">num.sims &lt;-<span class="st"> </span><span class="fl">1e5</span></a>
-<a class="sourceLine" id="cb38-2" data-line-number="2">sim.hands &lt;-<span class="st"> </span><span class="kw">replicate</span>(num.sims,<span class="kw">DealPoker</span>()</a>
-<a class="sourceLine" id="cb38-3" data-line-number="3">                       ,<span class="dt">simplify=</span>F)</a>
-<a class="sourceLine" id="cb38-4" data-line-number="4">results &lt;-<span class="st"> </span><span class="kw">lapply</span>(sim.hands,IsFullHouse)</a>
-<a class="sourceLine" id="cb38-5" data-line-number="5">prob.full.house &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">unlist</span>(results))<span class="op">/</span>num.sims</a></code></pre></div>
-<p>Analytically the probability of getting a full house <em>can</em> be calculated as approximately 0.00144, with our simulation procedure we get 0.00152.</p>
-</section><section id="closing-thoughts-on-monte-carlo" class="slide level2">
-<h2>Closing Thoughts on Monte Carlo</h2>
-<p>A few facts about Monte Carlo procedures:</p>
-<ul>
-<li class="fragment">They return a random result due to randomness in the sampling procedures.</li>
-<li class="fragment">The run-time (or number of iterations) is fixed and typically specified.</li>
-<li class="fragment">Mathematically, Monte Carlo procedures are computing an integral or enumerating a sum.</li>
-<li class="fragment">They take advantage of the law of large numbers</li>
-<li class="fragment">They were given the code name Monte Carlo in reference to the Monte Carlo Casino in Monaco.</li>
-</ul>
-</section></section>
-<section><section id="loops" class="title-slide slide level1"><h1>Loops</h1></section><section id="for-loops-1" class="slide level2">
-<h2>for loops 1</h2>
-<p>We have seen a few instances of for loops in this class, now consider these two statements. </p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1">rand.uniform2</a></code></pre></div>
-<pre><code>## [1] 0.2672035 0.2575682</code></pre>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(rand.uniform2)){</a>
-<a class="sourceLine" id="cb41-2" data-line-number="2">  <span class="kw">print</span>(i)</a>
-<a class="sourceLine" id="cb41-3" data-line-number="3">}</a></code></pre></div>
-<ul>
-<li class="fragment">what will each of these print?</li>
-</ul>
-</section><section id="for-loops-2" class="slide level2">
-<h2>for loops 2</h2>
-<p>We have seen a few instances of for loops in this class, now consider these two statements. </p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1">rand.uniform2</a></code></pre></div>
-<pre><code>## [1] 0.2672035 0.2575682</code></pre>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1"><span class="cf">for</span> (i <span class="cf">in</span> rand.uniform2){</a>
-<a class="sourceLine" id="cb44-2" data-line-number="2">  <span class="kw">print</span>(i)</a>
-<a class="sourceLine" id="cb44-3" data-line-number="3">}</a></code></pre></div>
-</section><section id="for-loops" class="slide level2">
-<h2>for loops</h2>
-<p>We can loop through a sequence or a vector.</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(rand.uniform2)){</a>
-<a class="sourceLine" id="cb45-2" data-line-number="2">  <span class="kw">print</span>(i)</a>
-<a class="sourceLine" id="cb45-3" data-line-number="3">}</a></code></pre></div>
-<pre><code>## [1] 1
-## [1] 2</code></pre>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" data-line-number="1"><span class="cf">for</span> (i <span class="cf">in</span> rand.uniform2){</a>
-<a class="sourceLine" id="cb47-2" data-line-number="2">  <span class="kw">print</span>(i)</a>
-<a class="sourceLine" id="cb47-3" data-line-number="3">}</a></code></pre></div>
-<pre><code>## [1] 0.2672035
-## [1] 0.2575682</code></pre>
-</section><section id="while-loops" class="slide level2">
-<h2>While loops</h2>
-<p>An alternative to for loops is to use the while statement. </p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">02012017</span>)</a>
-<a class="sourceLine" id="cb49-2" data-line-number="2">total.snow &lt;-<span class="st"> </span><span class="dv">0</span></a>
-<a class="sourceLine" id="cb49-3" data-line-number="3"><span class="cf">while</span> (total.snow <span class="op">&lt;</span><span class="st"> </span><span class="dv">36</span>){</a>
-<a class="sourceLine" id="cb49-4" data-line-number="4">  <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">'need more snow, only have'</span>, </a>
-<a class="sourceLine" id="cb49-5" data-line-number="5">              total.snow, <span class="st">'inches'</span>))</a>
-<a class="sourceLine" id="cb49-6" data-line-number="6">  total.snow &lt;-<span class="st"> </span>total.snow <span class="op">+</span><span class="st"> </span><span class="kw">rpois</span>(<span class="dv">1</span>,<span class="dv">15</span>)</a>
-<a class="sourceLine" id="cb49-7" data-line-number="7">}</a></code></pre></div>
-<pre><code>## [1] &quot;need more snow, only have 0 inches&quot;
-## [1] &quot;need more snow, only have 18 inches&quot;
-## [1] &quot;need more snow, only have 31 inches&quot;</code></pre>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" data-line-number="1">  <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">'okay, we now have'</span>, total.snow, <span class="st">'inches'</span>))</a></code></pre></div>
-<pre><code>## [1] &quot;okay, we now have 48 inches&quot;</code></pre>
-</section><section id="repeat-loops" class="slide level2">
-<h2>Repeat Loops</h2>
-<p>Repeat loops are similar to while loops, but with the requirement that the expressions are evaluated at least once and require an explicit <code>break</code> statement.</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" data-line-number="1"><span class="cf">repeat</span>{</a>
-<a class="sourceLine" id="cb53-2" data-line-number="2">  total.snow &lt;-<span class="st"> </span>total.snow <span class="op">+</span><span class="st"> </span><span class="kw">rpois</span>(<span class="dv">1</span>,<span class="dv">15</span>)</a>
-<a class="sourceLine" id="cb53-3" data-line-number="3">  <span class="kw">print</span>(<span class="kw">paste</span>(<span class="st">'we have'</span>, total.snow, <span class="st">'inches'</span>))</a>
-<a class="sourceLine" id="cb53-4" data-line-number="4">  <span class="cf">if</span> (total.snow <span class="op">&gt;=</span><span class="st"> </span><span class="dv">36</span>)</a>
-<a class="sourceLine" id="cb53-5" data-line-number="5">    <span class="cf">break</span></a>
-<a class="sourceLine" id="cb53-6" data-line-number="6">}</a></code></pre></div>
-<pre><code>## [1] &quot;we have 65 inches&quot;</code></pre>
-</section><section id="exercise-loops" class="slide level2">
-<h2>Exercise: Loops</h2>
-<p>Assume you plan to wager $1 on red for ten roulette spins. If the outcome is red you win a dollar and otherwise you lose a dollar. Write a loop that simulates ten rolls and determines your net profit or loss.</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" data-line-number="1"><span class="co">#hint: to get color from a single spin use</span></a>
-<a class="sourceLine" id="cb55-2" data-line-number="2"><span class="kw">RouletteSpin</span>(<span class="dv">1</span>)[<span class="dv">2</span>]</a></code></pre></div>
-<pre><code>##    color
-## 16   red</code></pre>
-</section><section id="solution-loops" class="slide level2">
-<h2>Solution: Loops</h2>
-<p>Assume you plan to wager $1 on red for ten roulette spins. If the outcome is red you win a dollar and otherwise you lose a dollar. Write a loop that simulates ten rolls and determines your net profit or loss.</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" data-line-number="1"><span class="co">#hint: to get color use</span></a>
-<a class="sourceLine" id="cb57-2" data-line-number="2">profit &lt;-<span class="st"> </span><span class="dv">0</span></a>
-<a class="sourceLine" id="cb57-3" data-line-number="3"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>){</a>
-<a class="sourceLine" id="cb57-4" data-line-number="4">  <span class="kw">ifelse</span>(<span class="kw">RouletteSpin</span>(<span class="dv">1</span>)[<span class="dv">2</span>] <span class="op">==</span><span class="st"> 'red'</span>,</a>
-<a class="sourceLine" id="cb57-5" data-line-number="5">         profit &lt;-<span class="st"> </span>profit <span class="op">+</span><span class="st"> </span><span class="dv">1</span>, </a>
-<a class="sourceLine" id="cb57-6" data-line-number="6">         profit &lt;-<span class="st"> </span>profit <span class="op">-</span><span class="st"> </span><span class="dv">1</span> )</a>
-<a class="sourceLine" id="cb57-7" data-line-number="7">}</a>
-<a class="sourceLine" id="cb57-8" data-line-number="8">profit</a></code></pre></div>
-<pre><code>## [1] 4</code></pre>
-</section><section id="why-not-loops" class="slide level2">
-<h2>Why not loops?</h2>
-<p>Some of you have seen or heard that loops in R should be avoided.</p>
-<ul>
-<li class="fragment"><p><strong>Why</strong>: it has to do with how code is compiled in R. In simple terms, vectorized operations are much more efficient than loops.</p></li>
-<li class="fragment"><p><strong>How</strong>: we have seen some solutions to this, explicitly using the apply class of functions. We can also write vectorized functions, consider the earlier roulette example where number of spins was an argument for the function.</p></li>
-</ul>
-</section><section id="exercise-probability-of-red-green-and-black" class="slide level2">
-<h2>Exercise: Probability of Red, Green, and Black</h2>
+<p>Using these external packages requires two steps:</p>
 <ol type="1">
-<li class="fragment"><p>Calculate/Derive the probability of landing on green, red, and black.</p></li>
-<li class="fragment"><p>How can the <code>RouletteSpin()</code> function be used to compute or approximate these probabilities?</p></li>
+<li class="fragment">Download the package <code>install.packages(&#39;ggplot2&#39;)</code>. This only needs to be done once.</li>
+<li class="fragment">Load the package <code>library(ggplot2)</code>. This needs to be done when opening R.</li>
 </ol>
-</section><section id="solution-probability-of-red-green-and-black" class="slide level2">
-<h2>Solution: Probability of Red, Green, and Black</h2>
-<p>In this situation, it is easy to compute the probabilities of each color analytically. However, consider simulating this process many times to estimate these probabilities.</p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" data-line-number="1">num.sims &lt;-<span class="st"> </span><span class="dv">1000</span></a>
-<a class="sourceLine" id="cb59-2" data-line-number="2">spins &lt;-<span class="st"> </span><span class="kw">RouletteSpin</span>(num.sims)</a>
-<a class="sourceLine" id="cb59-3" data-line-number="3">p.red &lt;-<span class="st"> </span><span class="kw">sum</span>(spins[,<span class="dv">2</span>] <span class="op">==</span><span class="st"> 'red'</span>) <span class="op">/</span><span class="st"> </span>num.sims</a>
-<a class="sourceLine" id="cb59-4" data-line-number="4">p.black &lt;-<span class="st"> </span><span class="kw">sum</span>(spins[,<span class="dv">2</span>] <span class="op">==</span><span class="st"> 'black'</span>) <span class="op">/</span><span class="st"> </span>num.sims</a>
-<a class="sourceLine" id="cb59-5" data-line-number="5">p.green &lt;-<span class="st"> </span><span class="kw">sum</span>(spins[,<span class="dv">2</span>] <span class="op">==</span><span class="st"> 'green'</span>) <span class="op">/</span><span class="st"> </span>num.sims</a></code></pre></div>
-<p>Analytically <span class="math inline">\(P[red] = \frac{18}{38} =\)</span> 0.4737, this is estimated as 0.46. Similarly, <span class="math inline">\(P[black] = \frac{18}{38} =\)</span> 0.4737, this is estimated as 0.481 and <span class="math inline">\(P[green] = \frac{2}{38} =\)</span> 0.0526, this is estimated as 0.059</p>
-</section><section id="exercise-simulation-questions---part-2" class="slide level2">
-<h2>Exercise: Simulation Questions - Part 2</h2>
-<p>Now what happens if we:</p>
-<ol type="1">
-<li class="fragment"><p>run the simulation again with the same number of trials?</p></li>
-<li class="fragment"><p>run the simulation with more trials, say 1 million?</p></li>
-</ol>
-</section><section id="solution-simulation-questions---part-2" class="slide level2">
-<h2>Solution: Simulation Questions - Part 2</h2>
-<p>Now what happens if we:</p>
-<ol type="1">
-<li class="fragment">run the simulation again with the same number of trials? </li>
-</ol>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1">num.sims &lt;-<span class="st"> </span><span class="dv">1000</span></a>
-<a class="sourceLine" id="cb60-2" data-line-number="2">spins &lt;-<span class="st"> </span><span class="kw">RouletteSpin</span>(num.sims)</a>
-<a class="sourceLine" id="cb60-3" data-line-number="3">p.red &lt;-<span class="st"> </span><span class="kw">sum</span>(spins[,<span class="dv">2</span>] <span class="op">==</span><span class="st"> 'red'</span>) <span class="op">/</span><span class="st"> </span>num.sims</a>
-<a class="sourceLine" id="cb60-4" data-line-number="4">p.black &lt;-<span class="st"> </span><span class="kw">sum</span>(spins[,<span class="dv">2</span>] <span class="op">==</span><span class="st"> 'black'</span>) <span class="op">/</span><span class="st"> </span>num.sims</a>
-<a class="sourceLine" id="cb60-5" data-line-number="5">p.green &lt;-<span class="st"> </span><span class="kw">sum</span>(spins[,<span class="dv">2</span>] <span class="op">==</span><span class="st"> 'green'</span>) <span class="op">/</span><span class="st"> </span>num.sims</a></code></pre></div>
-<p>The simulated results are different Analytically <span class="math inline">\(P[red] = \frac{18}{38} =\)</span> 0.4737, this is estimated as 0.445. Similarly, <span class="math inline">\(P[black] = \frac{18}{38} =\)</span> 0.4737, this is estimated as 0.496 and <span class="math inline">\(P[green] = \frac{2}{38} =\)</span> 0.0526, this is estimated as 0.059</p>
-</section><section id="solution-simulation-questions---part-2-1" class="slide level2">
-<h2>Solution: Simulation Questions - Part 2</h2>
-<ol start="2" type="1">
-<li class="fragment">run the simulation with more trials, say 1 million?</li>
-</ol>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1">num.sims &lt;-<span class="st"> </span><span class="dv">1000000</span></a>
-<a class="sourceLine" id="cb61-2" data-line-number="2">spins &lt;-<span class="st"> </span><span class="kw">RouletteSpin</span>(num.sims)</a>
-<a class="sourceLine" id="cb61-3" data-line-number="3">p.red &lt;-<span class="st"> </span><span class="kw">sum</span>(spins[,<span class="dv">2</span>] <span class="op">==</span><span class="st"> 'red'</span>) <span class="op">/</span><span class="st"> </span>num.sims</a>
-<a class="sourceLine" id="cb61-4" data-line-number="4">p.black &lt;-<span class="st"> </span><span class="kw">sum</span>(spins[,<span class="dv">2</span>] <span class="op">==</span><span class="st"> 'black'</span>) <span class="op">/</span><span class="st"> </span>num.sims</a>
-<a class="sourceLine" id="cb61-5" data-line-number="5">p.green &lt;-<span class="st"> </span><span class="kw">sum</span>(spins[,<span class="dv">2</span>] <span class="op">==</span><span class="st"> 'green'</span>) <span class="op">/</span><span class="st"> </span>num.sims</a></code></pre></div>
-<p>Analytically <span class="math inline">\(P[red] = \frac{18}{38} =\)</span> 0.4737, this is estimated as 0.4738. Similarly, <span class="math inline">\(P[black] = \frac{18}{38} =\)</span> 0.4737, this is estimated as 0.4736 and <span class="math inline">\(P[green] = \frac{2}{38} =\)</span> 0.0526, this is estimated as 0.0526</p>
 </section></section>
     </div>
   </div>

@@ -1,5 +1,5 @@
 ---
-title: "Week 4: Simulation, Loops, and if/else Statements"
+title: "R Style, Programming, and Debugging"
 output:
   revealjs::revealjs_presentation:
     theme: white
@@ -8,413 +8,203 @@ output:
     incremental: true
 ---
 
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(cache=TRUE)
 library(knitr)
-knitr::knit_hooks$set(mysize = function(before, options, envir) {
-  if (before) 
-    return(options$size)
-})
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+```
+# R Programming Style
 
+## R Style Guide
+While there is not universal agreement on programming style, there are two good examples:
+
+
+1. Hadley Wickham's Style Guide:
+[http://adv-r.had.co.nz/Style.html](http://adv-r.had.co.nz/Style.html)
+
+2. Google R Style Guide: [https://google.github.io/styleguide/Rguide.xml](https://google.github.io/styleguide/Rguide.xml), which presents different options from Wickham's guide.
+
+## Notation and Naming
+
+- **File Names:** File names should end in .R and be meaningful.
+    - Good: predict_ad_revenue.R
+    - Bad: foo.R
+- **Identifiers:** Don't use underscores or hypens in identifiers.
+    - The preferred form for variable names is all lower case letters with words separated with dots (`variable.name`), but `VariableName` is also accepted.
+    - Function names begin with capital letters and include no dots (`FunctionName`)
+
+## Syntax
+- **Spacing:** 
+    - Place spaces around all operators (`==, +, ...`)
+    - Do not place a space before a comma, but always place one after a comma.
+    - Place a space before left parenthesis, except in a function call.
+- **Assignment:**
+    - Use `<-` not `=` for assignment.
+
+## Operators in R
+- Most mathematical operators are self explanatory, but here are a few more important operators.
+    - `==` will test for equality. For example to determine if pi equals three, this can be evaluated with `pi == 3` in R and will return `r pi == 3 `. Note this operator returns a logical value.
+    - `&` is the AND operator, so `TRUE & FALSE` will return `r TRUE & FALSE`.
+    - `|` is the OR operator, so `TRUE | FALSE` will return `r TRUE | FALSE`.
+    - `!` is the NOT operator, so `! TRUE` will return `r  ! TRUE`.
+    - `^` permits power terms, so `4 ^ 2` returns `r 4^2` and `4 ^ .5` returns `r 4 ^ .5`.
+
+
+## Exercise: Order of operations
+Note that order of operations is important in writing R code.
+```{r opt,eval=F}
+4 - 2 ^ 2
+(4 - 2) ^ 2
+5 * 2 - 3 ^ 2
+pi == 3
+! TRUE & pi == 3
+! (TRUE | FALSE) 
 ```
 
-# Simulation in R
+Evaluate all  expressions. Note `!` is R's not operator.
 
-## What is Simulation 
-A few questions about simulation:
-
-1. What does statistical simulation mean to you?
-
-2. Describe a setting where simulation can be used.
-
-## Simulation of Roulette
-Consider the casino game Roulette.
-
-![Roulette Wheel](roulette.jpg)
-
-We can use simulation to evaluate gambling strategies.
-
-## Roulette Simulation in R
-```{r roulette, mysize=TRUE, size = '\\scriptsize'}
-RouletteSpin <- function(num.spins){
-  # function to simulate roulette spins
-  # ARGS: number of spins
-  # RETURNS: result of each spin
-  outcomes <- data.frame(number = c('00','0',
-                as.character(1:36)),
-                color=c('green','green','red','black','red','black',
-                        'red','black','red','black','red','black',
-                        'black','red','black','red','black',
-                        'red','black','red','red','black',
-                        'red','black','red','black','red',
-                        'black','red','black','black','red',
-                        'black','red','black','red','black','red'))
-  return(outcomes[sample(38,num.spins,replace=T),])
-}
-kable(RouletteSpin(2), row.names=F)
+## Solution: Order of operations
+The results of the R code are:
+```{r opt2, }
+4 - 2 ^ 2
+(4 - 2) ^ 2
+5 * 2 - 3 ^ 2
 ```
 
-
-# Conditional Expressions in R
-
-## Exercise: Conditions in R 
-We have touched on many of these before, but here are some examples of expressions (conditions) in R. Evaluate these expressions:
-
-```{r, eval=FALSE}
-pi > 3 & pi < 3.5
-c(1,3,5,7) %in% 1:3
-1:3 %in% c(1,3,5,7)
-rand.uniform <- runif(n = 1, min = 0, max = 1)
-rand.uniform < .5
-```
-
-## Solutions: Conditions in R: Evaluated 1
-
-```{r}
-pi > 3 & pi < 3.5
-c(1,3,5,7) %in% 1:3
-1:3 %in% c(1,3,5,7)
-```
-
-## Solutions: Conditions in R: Evaluated 2
-
-```{r}
-set.seed(01252020)
-rand.uniform <- runif(n = 1, min = 0, max = 1); rand.uniform
-rand.uniform < .5
-```
-
-
-## Conditional Expression: If and Else
-```{r}
-print(rand.uniform)
-```
-Now what does this return?
-```{r, eval=FALSE}
-if (rand.uniform < .5){
-  print('value less than 1/2')
-} else {
-    print('value greater than or equal to 1/2')
-}
-```
-
-## Conditional Expression: If and Else
-```{r}
-print(rand.uniform)
-if (rand.uniform < .5){
-  print('value less than 1/2')
-} else {
-    print('value greater than or equal to 1/2')
-}
-```
-
-## Conditional Expression: Vectorized?
-Does this function accept a vector as an input?
-```{r, eval=F}
-rand.uniform2 <- runif(2)
-print(rand.uniform2)
-if (rand.uniform2 < .5){
-  print('value less than 1/2')
-} else {
-    print('value greater than or equal to 1/2')
-}
-```
-
-## Conditional Expression: Vectorized?
-\footnotesize
-```{r, eval=T}
-rand.uniform2 <- runif(2)
-print(rand.uniform2)
-```
-
-## Conditional Expression: Vectorized?
-\footnotesize
-```{r, eval=T}
-if (rand.uniform2 < .5){
-  'value less than 1/2'
-} else {
-    'value greater than 1/2'
-}
-```
-
-
-## Conditional Expression, ifelse
-```{r}
-print(rand.uniform2)
-ifelse(rand.uniform2 < .5,'less than 1/2',
-       'greater than 1/2')
-```
-The `ifelse()` function is vectorized and generally preferred with a single set of if/else statements.
-
-## Exercise: Conditional Expression
-Write a conditional statement that takes a playing card with two arguments:
-
-- (`card.number <- '4'` and `card.suit <- 'C'` = 4 of clubs or `card.number <-'K'` and `card.suit <- 'H'` = King of hearts)  and
-- Print `Yes` if the card is a red face card and `No` otherwise.
-
-Verify this works using the following inputs:
-
-- `card.number <- 'J'` and `card.suit <- 'D'`
-- `card.number <- 'Q'` and `card.suit <- 'S'`
-
-
-## Solution: Conditional Expression
-\footnotesize
-```{r}
-card.number <- 'J'
-card.suit <- 'D'
-ifelse(card.number %in% c('J','Q','K') & 
-         card.suit %in% c('H','D'),'Yes','No')
-card.number <- 'Q'
-card.suit <- 'S'
-ifelse(card.number %in% c('J','Q','K') & 
-         card.suit %in% c('H','D'),'Yes','No')
-```
-
-# Monte Carlo Procedures
-
-## Motivation for Monte Carlo procedures
-Some probabilities can easily be calculated either intuitively or using pen and paper; however, as we have seen we can also simulate procedures to get an approximate answer.
-
-Consider poker, where players are dealt a hand of five cards from a deck of 52 cards. What is the probability of being dealt a full house?
-
-## Full House Probability Calculation 
-Could we analytically compute this probability? **Yes** Is it an easy calculation? not necessarily. So consider a (Monte Carlo) simulation.
-```{r}
-DealPoker <- function(){
-  # Function returns a hand of 5 cards
-  
-  
-  
-  
-}
-  
-```
-
-## Full House Probability Calculation
-Could we analytically compute this probability? **Yes** Is it an easy calculation, not necessarily. So consider a (Monte Carlo) simulation.
-\footnotesize
-```{r}
-DealPoker <- function(){
-  # Function returns a hand of 5 cards
-  deck <- data.frame( suit = rep(c("H", "S","C","D"),each=13),
-          card = rep(c('A',2:10,'J',"Q",'K'),4) )  
-  return(deck[sample(52,5),])
-}
-```
-
-## Full House Probability Calculation 
-Next write another function to check if the hand is a full house.
-\footnotesize
-```{r}
-IsFullHouse <- function(hand){
-  #determines whether a hand of 5 cards is a full house
-  #ARGS: data frame of 5 cards
-  #RETURNS: TRUE or FALSE
-  cards <- hand[,2]
-  num.unique <- length(unique(cards))
-  ifelse(num.unique == 2, return(TRUE),return(FALSE)) 
-}
-```
-Does this work? If not, what is the problem and how do we fix it?
-
-## Full House Probability Calculation
-\footnotesize
-```{r}
-IsFullHouse <- function(hand){
-  #determines whether a hand of 5 cards is a full house
-  #ARGS: data frame of 5 cards
-  #RETURNS: TRUE or FALSE
-  cards <- hand[,2]
-  num.unique <- length(unique(cards))
-  num.appearances <- aggregate(rep(1,5),
-                               list(cards),sum)
-  max.appearance <- max(num.appearances[,2])
-  ifelse(num.unique == 2 & max.appearance ==3,
-         return(TRUE),return(FALSE)) 
-}
-```
-
-## Full House Probability Calculation
-```{r}
-num.sims <- 1e5
-sim.hands <- replicate(num.sims,DealPoker()
-                       ,simplify=F)
-results <- lapply(sim.hands,IsFullHouse)
-prob.full.house <- sum(unlist(results))/num.sims
-```
-Analytically the probability of getting a full house *can* be calculated as approximately 0.00144, with our simulation procedure we get `r prob.full.house`.
-
-## Closing Thoughts on Monte Carlo
-A few facts about Monte Carlo procedures:
-
-- They return a random result due to randomness in the sampling procedures.
-- The run-time (or number of iterations) is fixed and typically specified.
-- Mathematically, Monte Carlo procedures are computing an integral or enumerating a sum.
-- They take advantage of the law of large numbers
-- They were given the code name Monte Carlo in reference to the Monte Carlo Casino in Monaco. 
-
-
-# Loops
-
-## for loops 1
-We have seen a few instances of for loops in this class, now consider these two statements.
-\footnotesize
-```{r}
-rand.uniform2
-```
-
-```{r, eval=F}
-for (i in 1:length(rand.uniform2)){
-  print(i)
-}
-```
-
-
-- what will each of these print?
-
-## for loops 2
-We have seen a few instances of for loops in this class, now consider these two statements.
-\footnotesize
-```{r}
-rand.uniform2
-```
-
-```{r, eval=F}
-for (i in rand.uniform2){
-  print(i)
-}
-```
-
-
-## for loops
-We can loop through a sequence or a vector.
-```{r}
-for (i in 1:length(rand.uniform2)){
-  print(i)
-}
-
-for (i in rand.uniform2){
-  print(i)
-}
-```
-
-## While loops
-An alternative to for loops is to use the while statement.
-\small
-```{r}
-set.seed(02012017)
-total.snow <- 0
-while (total.snow < 36){
-  print(paste('need more snow, only have', 
-              total.snow, 'inches'))
-  total.snow <- total.snow + rpois(1,15)
-}
-  print(paste('okay, we now have', total.snow, 'inches'))
-```
-
-## Repeat Loops
-Repeat loops are similar to while loops, but with the requirement that the expressions are evaluated at least once and require an explicit `break` statement.
-
-```{r}
-repeat{
-  total.snow <- total.snow + rpois(1,15)
-  print(paste('we have', total.snow, 'inches'))
-  if (total.snow >= 36)
-    break
-}
-```
-
-## Exercise: Loops
-
-Assume you plan to wager $1 on red for ten roulette spins. If the outcome is red you win a dollar and otherwise you lose a dollar. Write a loop that simulates ten rolls and determines your net profit or loss.
-
-```{r}
-#hint: to get color from a single spin use
-RouletteSpin(1)[2]
-```
-
-## Solution: Loops
-
-Assume you plan to wager $1 on red for ten roulette spins. If the outcome is red you win a dollar and otherwise you lose a dollar. Write a loop that simulates ten rolls and determines your net profit or loss.
-
-```{r}
-#hint: to get color use
-profit <- 0
-for (i in 1:10){
-  ifelse(RouletteSpin(1)[2] == 'red',
-         profit <- profit + 1, 
-         profit <- profit - 1 )
-}
-profit
-```
-
-
-
-## Why not loops?
-Some of you have seen or heard that loops in R should be avoided.
-
-- **Why**: it has to do with how code is compiled in R. In simple terms, vectorized operations are much more efficient than loops.
-
-- **How**: we have seen some solutions to this, explicitly using the apply class of functions. We can also write vectorized functions, consider the earlier roulette example where number of spins was an argument for the function.
-
-
-
-## Exercise: Probability of Red, Green, and Black
-1. Calculate/Derive the probability of landing on green, red, and black.
-
-2. How can the `RouletteSpin()` function be used to compute or approximate these probabilities?
-
-## Solution: Probability of Red, Green, and Black
-
-In this situation, it is easy to compute the probabilities of each color analytically. However, consider simulating this process many times to estimate these probabilities.
-```{r rouletteSpins}
-num.sims <- 1000
-spins <- RouletteSpin(num.sims)
-p.red <- sum(spins[,2] == 'red') / num.sims
-p.black <- sum(spins[,2] == 'black') / num.sims
-p.green <- sum(spins[,2] == 'green') / num.sims
-```
-Analytically $P[red] = \frac{18}{38} =$ `r round(18/38,4)`, this is estimated as `r round(p.red,4)`. Similarly, $P[black] = \frac{18}{38} =$ `r round(18/38,4)`, this is estimated as `r round(p.black,4)` and $P[green] = \frac{2}{38} =$ `r round(2/38,4)`, this is estimated as `r round(p.green,4)`
-
-## Exercise: Simulation Questions - Part 2 
-
-Now what happens if we:
-
-1. run the simulation again with the same number of trials?
-
-2. run the simulation with more trials, say 1 million?
-
-## Solution: Simulation Questions - Part 2
-
-Now what happens if we:
-
-1. run the simulation again with the same number of trials?
-\footnotesize
+## Solution: Order of operations
+The results of the R code are:
 ```{r }
-num.sims <- 1000
-spins <- RouletteSpin(num.sims)
-p.red <- sum(spins[,2] == 'red') / num.sims
-p.black <- sum(spins[,2] == 'black') / num.sims
-p.green <- sum(spins[,2] == 'green') / num.sims
+pi == 3
+! TRUE & pi == 3
+! (TRUE | FALSE) 
 ```
-The simulated results are different
-Analytically $P[red] = \frac{18}{38} =$ `r round(18/38,4)`, this is estimated as `r round(p.red,4)`. Similarly, $P[black] = \frac{18}{38} =$ `r round(18/38,4)`, this is estimated as `r round(p.black,4)` and $P[green] = \frac{2}{38} =$ `r round(2/38,4)`, this is estimated as `r round(p.green,4)`
 
-## Solution: Simulation Questions - Part 2
 
-2. run the simulation with more trials, say 1 million?
+## Organization: Layout of .R
+- **General Layout:**
+The general layout of an R script should follow as:
+  1. Author Comment
+  2. File description comment, including purpose of program, inputs, and outputs
+  3. `source()` and `library()` statements
+  4. Function definitions
+  5. Executed statements
 
-```{r }
-num.sims <- 1000000
-spins <- RouletteSpin(num.sims)
-p.red <- sum(spins[,2] == 'red') / num.sims
-p.black <- sum(spins[,2] == 'black') / num.sims
-p.green <- sum(spins[,2] == 'green') / num.sims
+## Organization: Layout of .Rmd
+- **General Layout:**
+We will generally work with R Markdown files (.Rmd) in this class.
+
+- Code comments can be included in R chunks
+
+- Print out all code in documents
+
+- For reproducibility R output can be integrated into text, using "r mean(x)" (using back ticks in place of quotes). _DO NOT_ hard code results in written text.
+
+- Look at output to verify results look how you intended.
+  
+## Organization: Commenting
+>- Comment your code. Entire commented lines should begin with `#` and then one space.
+>- Short comments can be placed after code preceded by two spaces, `#` and then one space.
+```{r noeval, eval=FALSE}
+# create plot of housing price by zipcode
+plot(Seattle$Price ~ Seattle$Zip,
+  rgb(.5,0,0,.7),  # set transparency for points
+  xlab='zipode')
 ```
-Analytically $P[red] = \frac{18}{38} =$ `r round(18/38,4)`, this is estimated as `r round(p.red,4)`. Similarly, $P[black] = \frac{18}{38} =$ `r round(18/38,4)`, this is estimated as `r round(p.black,4)` and $P[green] = \frac{2}{38} =$ `r round(2/38,4)`, this is estimated as `r round(p.green,4)`
+
+## Parting Words
+>- Use common sense and *be consistent*.
+>- If you are editing code, take a few minutes to look at the code around you and mimic the style.
+>- Enough about writing code; the code itself is much more interesting. Have fun!
+
+# Course Goals
+
+With this class, we cannot cover every possible situation that you will encounter. The goals are to:
+
+1. Give you a broad range of tools that can be employed to manipulate, visualize, and analyze data, and
+2. teach you to find help when you or your code "gets stuck".
 
 
+## Process for writing code
 
+When writing code (and conducting statistical analyses) an iterative approach is a good strategy.
+
+1. Test each line of code as you write it and if necessary confirm that nested functions are giving the desired results.
+2. Start simple and then add more complexity.
+
+## Debugging Overview
+
+> Finding your bug is a process of confirming the many things that you believe are true -- until you find one which is not true. 
+- Norm Matloff
+
+## Debugging Guide 
+We will first focus on debugging when an error, or warning is tripped.
+
+1. Realize you have a bug (if error or warning, read the message)
+2. Make it repeatable
+3. Identify the problematic line (using print statements can be helpful)
+4. Fix it and test it (evaluate nested functions if necessary)
+
+## Warnings vs. Errors
+
+R will flag, print out a message, in two cases: warnings and errors.
+
+ - What is the difference between the two?
+ - Is the R process treated differently for errors and warnings?
+ 
+## Warnings vs. Errors
+
+- Fatal errors are signaled with `stop()` and force all execution of code to stop triggering an `error`.
+- Warnings are generated with `warning()` and display potential problems. Warnings **do not** stop code from executing.
+- Messages can also be passed using `message()`, which pass along information.
+
+
+## Bugs without warning/error
+
+In other cases, we will have bugs in our code that don't necessarily give a warning or an error.
+
+- How do we identify these bugs?
+- How can we exit a case where:
+    - R is running and may be stuck?
+    - the code won't execute because of misaligned parenthesis, braces, brackets?
+
+Note: `NA` values often return a warning message, but not always.
+
+
+# Tables for R Markdown
+
+## Kable function
+Note that output from R can often be hard to read. Luckily there are several options for creating nicely formatted tables. One, which we will use, is the kable function.
+
+## Kable function
+```{r kable, mysize=TRUE, size='\\small'}
+library(knitr)
+kable(aggregate(Loblolly$height,
+      by=list(Loblolly$age),mean), digits=3,
+      caption= 'Average height of loblolly pine by age',
+      col.names = c('Tree Age','Height (ft)'))
+```
+
+# Built in R Functions
+
+## R Functions
+>- To get more details in R, type `?FunctionName`. This will open up a help window that displays essential characteristics of the function. For example, with the `mean` function the following information is shown:
+
+**Description**: function for the (trimmed) arithmetic mean.
+
+**Usage**: mean(x, trim = 0, na.rm = FALSE, ...)
+
+**x**: An R object.
+
+**trim:** the fraction (0 to 0.5) of observations to be trimmed from each end of x before the mean is computed. 
+
+**na.rm:** a logical value indicating whether NA values should be stripped before the computation proceeds.
+
+## Downloading R Packages
+>- R has a set of built in functions, which we have used thus far.
+>- R also has a vast repository of "packages" that contain additional, specialized functions. One example is a graphics packaged called `ggplot2` which we will see later in this class.
+
+Using these external packages requires two steps:
+
+1. Download the package `install.packages('ggplot2')`. This only needs to be done once.
+2. Load the package `library(ggplot2)`. This needs to be done when opening R.
+    
