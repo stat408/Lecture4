@@ -1,5 +1,5 @@
 ---
-title: "R Style, Programming, and Debugging"
+title: "Debugging + Data Wrangling"
 output:
   revealjs::revealjs_presentation:
     theme: white
@@ -13,110 +13,8 @@ library(knitr)
 library(tidyverse)
 knitr::opts_chunk$set(echo = TRUE)
 ```
-# R Programming Style
 
-## R Style Guide
-While there is not universal agreement on programming style, there are two good examples:
-
-
-1. Hadley Wickham's Style Guide:
-[http://adv-r.had.co.nz/Style.html](http://adv-r.had.co.nz/Style.html)
-
-2. Google R Style Guide: [https://google.github.io/styleguide/Rguide.xml](https://google.github.io/styleguide/Rguide.xml), which presents different options from Wickham's guide.
-
-## Notation and Naming
-
-- **File Names:** File names should end in .R and be meaningful.
-    - Good: predict_ad_revenue.R
-    - Bad: foo.R
-- **Identifiers:** Don't use underscores or hypens in identifiers.
-    - The preferred form for variable names is all lower case letters with words separated with dots (`variable.name`), but `VariableName` is also accepted.
-    - Function names begin with capital letters and include no dots (`FunctionName`)
-
-## Syntax
-- **Spacing:** 
-    - Place spaces around all operators (`==, +, ...`)
-    - Do not place a space before a comma, but always place one after a comma.
-    - Place a space before left parenthesis, except in a function call.
-- **Assignment:**
-    - Use `<-` not `=` for assignment.
-
-## Operators in R
-- Most mathematical operators are self explanatory, but here are a few more important operators.
-    - `==` will test for equality. For example to determine if pi equals three, this can be evaluated with `pi == 3` in R and will return `r pi == 3 `. Note this operator returns a logical value.
-    - `&` is the AND operator, so `TRUE & FALSE` will return `r TRUE & FALSE`.
-    - `|` is the OR operator, so `TRUE | FALSE` will return `r TRUE | FALSE`.
-    - `!` is the NOT operator, so `! TRUE` will return `r  ! TRUE`.
-    - `^` permits power terms, so `4 ^ 2` returns `r 4^2` and `4 ^ .5` returns `r 4 ^ .5`.
-
-
-## Exercise: Order of operations
-Note that order of operations is important in writing R code.
-```{r opt,eval=F}
-4 - 2 ^ 2
-(4 - 2) ^ 2
-5 * 2 - 3 ^ 2
-pi == 3
-! TRUE & pi == 3
-! (TRUE | FALSE) 
-```
-
-Evaluate all  expressions. Note `!` is R's not operator.
-
-## Solution: Order of operations
-The results of the R code are:
-```{r opt2, }
-4 - 2 ^ 2
-(4 - 2) ^ 2
-5 * 2 - 3 ^ 2
-```
-
-## Solution: Order of operations
-The results of the R code are:
-```{r }
-pi == 3
-! TRUE & pi == 3
-! (TRUE | FALSE) 
-```
-
-
-## Organization: Layout of .R
-- **General Layout:**
-The general layout of an R script should follow as:
-  1. Author Comment
-  2. File description comment, including purpose of program, inputs, and outputs
-  3. `source()` and `library()` statements
-  4. Function definitions
-  5. Executed statements
-
-## Organization: Layout of .Rmd
-- **General Layout:**
-We will generally work with R Markdown files (.Rmd) in this class.
-
-- Code comments can be included in R chunks
-
-- Print out all code in documents
-
-- For reproducibility R output can be integrated into text, using "r mean(x)" (using back ticks in place of quotes). _DO NOT_ hard code results in written text.
-
-- Look at output to verify results look how you intended.
-  
-## Organization: Commenting
->- Comment your code. Entire commented lines should begin with `#` and then one space.
->- Short comments can be placed after code preceded by two spaces, `#` and then one space.
-```{r noeval, eval=FALSE}
-# create plot of housing price by zipcode
-plot(Seattle$Price ~ Seattle$Zip,
-  rgb(.5,0,0,.7),  # set transparency for points
-  xlab='zipode')
-```
-
-## Parting Words
->- Use common sense and *be consistent*.
->- If you are editing code, take a few minutes to look at the code around you and mimic the style.
->- Enough about writing code; the code itself is much more interesting. Have fun!
-
-# Course Goals
+# Course Goals (Debugging)
 
 With this class, we cannot cover every possible situation that you will encounter. The goals are to:
 
@@ -170,41 +68,337 @@ In other cases, we will have bugs in our code that don't necessarily give a warn
 Note: `NA` values often return a warning message, but not always.
 
 
-# Tables for R Markdown
 
-## Kable function
-Note that output from R can often be hard to read. Luckily there are several options for creating nicely formatted tables. One, which we will use, is the kable function.
+# Operators in R
+- Most mathematical operators are self explanatory, but here are a few more important operators.
+    - `==` will test for equality. For example to determine if pi equals three, this can be evaluated with `pi == 3` in R and will return `r pi == 3 `. Note this operator returns a logical value.
+    - `&` is the AND operator, so `TRUE & FALSE` will return `r TRUE & FALSE`.
+    - `|` is the OR operator, so `TRUE | FALSE` will return `r TRUE | FALSE`.
+    - `!` is the NOT operator, so `! TRUE` will return `r  ! TRUE`.
+    - `^` permits power terms, so `4 ^ 2` returns `r 4^2` and `4 ^ .5` returns `r 4 ^ .5`.
 
-## Kable function
-```{r kable, mysize=TRUE, size='\\small'}
-library(knitr)
-kable(aggregate(Loblolly$height,
-      by=list(Loblolly$age),mean), digits=3,
-      caption= 'Average height of loblolly pine by age',
-      col.names = c('Tree Age','Height (ft)'))
+
+## Exercise: Order of operations
+Note that order of operations is important in writing R code.
+```{r opt,eval=F}
+4 - 2 ^ 2
+(4 - 2) ^ 2
+5 * 2 - 3 ^ 2
+pi == 3
+! TRUE & pi == 3
+! (TRUE | FALSE) 
 ```
 
-# Built in R Functions
+Evaluate all  expressions. Note `!` is R's not operator.
 
-## R Functions
->- To get more details in R, type `?FunctionName`. This will open up a help window that displays essential characteristics of the function. For example, with the `mean` function the following information is shown:
+## Solution: Order of operations
+The results of the R code are:
+```{r opt2, }
+4 - 2 ^ 2
+(4 - 2) ^ 2
+5 * 2 - 3 ^ 2
+```
 
-**Description**: function for the (trimmed) arithmetic mean.
+## Solution: Order of operations
+The results of the R code are:
+```{r }
+pi == 3
+! TRUE & pi == 3
+! (TRUE | FALSE) 
+```
 
-**Usage**: mean(x, trim = 0, na.rm = FALSE, ...)
+# Data Wrangling
 
-**x**: An R object.
+## Data Wrangling
+As a statistician or more generally a data scientist the ability to manipulate, process, clean, and merge datasets is an essential skill. 
 
-**trim:** the fraction (0 to 0.5) of observations to be trimmed from each end of x before the mean is computed. 
+- These skills are generally referred to as data wrangling.
+- In a data analysis or visualization setting, they will undoubtedly require a majority of your time.
+- Wrangling data can be a painful process.
+- This lecture will provide some tools and example of organizing data.
 
-**na.rm:** a logical value indicating whether NA values should be stripped before the computation proceeds.
+## Data Wrangling Concepts
 
-## Downloading R Packages
->- R has a set of built in functions, which we have used thus far.
->- R also has a vast repository of "packages" that contain additional, specialized functions. One example is a graphics packaged called `ggplot2` which we will see later in this class.
+- Wide and thin datasets
+- Merging and joining relational data
+- Dealing with strings (_later_)
+- Dealing with date/time objects (_later_)
 
-Using these external packages requires two steps:
 
-1. Download the package `install.packages('ggplot2')`. This only needs to be done once.
-2. Load the package `library(ggplot2)`. This needs to be done when opening R.
-    
+# Tidy Data
+
+## Rules for Tidy Data
+The concept of tidy data can be attributed to Hadley Wickham and has three principles for organizing data. [Tidy Data Reference](https://vita.had.co.nz/papers/tidy-data.pdf)
+
+1. Each variable must have its own column,
+2. Each observation must have its own row, and
+3. Each value must have its own cell.
+
+## Tidy Data Visual
+
+![Visual Representation of Tidy Data. Source: R4DS ](https://r4ds.hadley.nz/images/tidy-1.png)
+
+
+## Why use Tidy Data
+
+*Tidy datasets are all alike, but every messy dataset is messy in its own way. - Hadley Wickham*
+
+- Storing data in a consistent way gives familiarity with methods for manipulating data.
+- Tidy data structure takes advantage of vectorised operations in R
+- Many useful packages: such as `dplyr` and `ggplot2` require tidy data.
+
+
+
+# Merge / Join
+
+## Merge
+An important skill is merging or combining data sets.
+
+Consider the two data frames, how can we merge them and what should be the dimensions of the merged data frame.
+```{r, echo = FALSE}
+school_locations <- data.frame(school = c('MSU','VT','Mines'),
+            state= c('MT', 'VA', 'CO'), stringsAsFactors = F)
+kable(school_locations)
+school_pop <- data.frame(school = c('Mines','MSU','VT'),
+            enrollment = c(5794, 15688, 30598), stringsAsFactors = F)
+kable(school_pop)
+```
+
+## pre-sort
+One possibility is to use the arrange the data frames first and combine. Note: not generally advised.
+
+```{r}
+school_locations <- school_locations[order(school_locations$school),]
+school_pop <- school_pop[order(school_pop$school),]
+```
+
+## pre-sort
+One possibility is to use the arrange the data frames first and combine. Note: not generally advised.
+
+```{r}
+school_locations 
+school_pop 
+```
+
+
+## rbind() and cbind()
+
+Now, given that the data frames are both sorted the same way, we can bind the rows together.
+
+```{r}
+comb_df <- cbind(school_locations, school_pop)
+comb_df
+comb_df <- comb_df[,-3]
+```
+
+## rbind() and cbind()
+Now assume we want to add another school to the data frame.
+
+```{r, error=TRUE}
+new_school <- c('Luther', 'IA',2337)
+rbind(comb_df, new_school)
+```
+Note: if your strings are saved as factors, this chunk of code will give you an error.
+
+## bind_rows() / bind_cols()
+
+`dplyr` also contains functions for binding rows and columns.
+
+## Exercise
+
+Now combine the following information into a single table sorted alphabetically by the name of the ski hill.
+```{r, echo = F}
+ski_acres <- data.frame( ski.hill = c('Big Sky','Bridger Bowl', 'Jackson', 'Steamboat' ), 
+                        skiable.acres = c(5800,2000, "2500+",2965))
+kable(ski_acres)
+
+df_cost <- data.frame( ski.resort = c('Bridger Bowl', 'Big Sky', 'Steamboat', 'Jackson'), 
+                       ticket.cost = c(60, 'depends', 145, 130))
+df_cost
+disco <- data.frame(ski.hill = 'Discovery', skiable.acres = "2200", ticket.cost = "20"); disco
+```
+
+## Solution 1: bind_cols()
+
+Now combine the following information into a single table sorted alphabetically by the name of the ski hill.
+```{r, echo = F}
+ski_acres |>
+  bind_cols(df_cost) |> 
+  select(-ski.resort) |>
+  bind_rows(disco) |>
+  arrange(ski.hill) |>
+  kable()
+```
+
+
+## Solution 1: bind_cols()
+
+```{r, eval = F}
+ski_acres |>
+  bind_cols(df_cost) |> 
+  select(-ski.resort) |>
+  bind_rows(disco) |>
+  arrange(ski.hill) |>
+  kable()
+```
+
+
+## Better Option: join()
+We could have also used some of the more advanced merge (join) features from dplyr.
+
+```{r}
+school_df <- full_join(school_locations, school_pop, by='school')
+school_df
+```
+
+## more about join
+
+The dplyr join command includes the following options:
+
+- left join
+- right join
+- inner join
+- full join
+- anti join
+
+## Exercise
+
+Combine the data sets
+```{r,echo = F}
+ski_acres
+df_cost
+disco_df <- tibble(ski.hill = 'Discovery', skiable.acres = '2200', ticket.cost = '20'); disco_df
+```
+
+## Better Solution
+
+```{r, }
+
+full_join(ski_acres, df_cost, by = c("ski.hill"= "ski.resort")) |>
+  full_join(disco, by = join_by(ski.hill, skiable.acres, ticket.cost)) |>
+  arrange(ski.hill)
+```
+
+
+# wide / long data
+
+## Hoops Data
+
+This is a _wide_ dataset
+
+```{r, message = F}
+hoops <- read_csv('http://www.math.montana.edu/ahoegh/teaching/stat408/datasets/TourneyDetailedResults.csv')
+head(hoops)
+```
+
+## Plot Creation
+Consider a plot where the number of points is colored or faceted by winning or losing. 
+
+This requires a dataset that  is _thin_ and looks something like
+
+|      Game Id     | Points |win/lose | 
+|:----------------:|-------|:---------:|
+| 1 | 92   | win       |
+| 1   | 84   | lose       |
+| 2  | 80   | win       |
+| 2 | 51    | lose      |
+
+## Data Wrangling
+
+```{r}
+lose_score <- hoops |> select(score = Lscore) |>
+  mutate(outcome = 'lose', game_id = row_number()) 
+win_score <- hoops |> select(score = Wscore) |> 
+  mutate(outcome = 'win', game_id = row_number())
+thin_scores <- bind_rows(win_score, lose_score) |> 
+  arrange(game_id)
+thin_scores
+```
+
+
+## Plot Creation
+
+```{r, echo = F, message = F}
+thin_scores %>% ggplot(aes(x = score)) + geom_histogram() + facet_wrap(.~outcome) +
+  ggtitle('Points scored in NCAA games for Winning and Losing Teams')
+```
+
+## tidyr package
+
+The `tidyr` package contains additional tools for converting files from long to wide formats.
+
+Consider the `billboard` dataset which contains the rank of the song (in 2000) for each week after it first entered the list.
+
+```{r}
+billboard
+```
+
+## billboard data
+
+If we want to identify songs that reach number 1 quickly, the data needs to manipulated.
+```{r}
+billboard_thin <- billboard |> 
+  pivot_longer(
+    cols = starts_with("wk"), 
+    names_to = "week", 
+    values_to = "rank",
+  values_drop_na = T
+  )
+billboard_thin
+```
+
+## Billboard Data Exercise
+
+1. Determine which song in this dataset spent the most time at #1
+2. How many different artists showed up on the billboard list?
+3. Which artists had the most different songs on the billboard list?
+4. Which track was on the most lists?
+
+## 1. Solution
+
+```{r}
+billboard_thin |>
+  filter(rank == 1) |>
+  group_by(artist, track) |> 
+  tally() |>
+  ungroup() |>
+  arrange(desc(n)) |>
+  slice(1) |>
+  kable()
+```
+
+## 2. Solution
+
+```{r}
+billboard_thin |>
+  group_by(artist) |>
+  tally() |>
+  tally()
+```
+
+## 3. Solution
+
+```{r}
+billboard_thin |>
+  group_by(artist, track) |>
+  slice(1) |>
+  ungroup() |>
+  group_by(artist) |>
+  tally() |>
+  arrange(desc(n)) |>
+  slice(1)
+```
+
+## 4. Solution
+
+```{r}
+billboard_thin |>
+  group_by(track, artist) |>
+  tally() |> arrange(desc(n))
+```
+
+
+
+## pivot_wider()
+
+The `pivot_wider()` function allows transformation in the other direction from thin to wide.
