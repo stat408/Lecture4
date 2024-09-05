@@ -1,0 +1,70 @@
+---
+title: "Lecture 4: Exercises"
+format: html
+editor: source
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise: Order of operations
+Note that order of operations is important in writing R code.
+```{r opt,eval=F}
+4 - 2 ^ 2
+(4 - 2) ^ 2
+5 * 2 - 3 ^ 2
+pi == 3
+! TRUE & pi == 3
+! (TRUE | FALSE) 
+```
+
+
+
+## Exercise
+
+Now combine the following information into a single table sorted alphabetically by the name of the ski hill.
+```{r, echo = F}
+ski_acres <- data.frame( ski.hill = c('Big Sky','Bridger Bowl', 'Jackson', 'Steamboat' ), 
+                        skiable.acres = c(5800,2000, "2500+",2965))
+kable(ski_acres)
+
+df_cost <- data.frame( ski.resort = c('Bridger Bowl', 'Big Sky', 'Steamboat', 'Jackson'), 
+                       ticket.cost = c(60, 'depends', 145, 130))
+df_cost
+disco <- data.frame(ski.hill = 'Discovery', skiable.acres = "2200", ticket.cost = "20"); disco
+```
+
+
+## Exercise
+
+Combine the data sets
+```{r,echo = F}
+ski_acres
+df_cost
+disco_df <- tibble(ski.hill = 'Discovery', skiable.acres = '2200', ticket.cost = '20'); disco_df
+```
+
+
+## billboard data
+
+If we want to identify songs that reach number 1 quickly, the data needs to manipulated.
+```{r}
+billboard_thin <- billboard |> 
+  pivot_longer(
+    cols = starts_with("wk"), 
+    names_to = "week", 
+    values_to = "rank",
+  values_drop_na = T
+  )
+billboard_thin
+```
+
+## Billboard Data Exercise
+
+1. Determine which song in this dataset spent the most time at #1
+2. How many different artists showed up on the billboard list?
+3. Which artists had the most different songs on the billboard list?
+4. Which track was on the most lists?
